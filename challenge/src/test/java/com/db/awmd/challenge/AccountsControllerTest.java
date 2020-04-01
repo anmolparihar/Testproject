@@ -45,7 +45,7 @@ public class AccountsControllerTest {
   }
 
   @Test
-  public void createAccount() throws Exception {
+  public void createAccount() throws Exception  {
     this.mockMvc.perform(post("/v1/accounts").contentType(MediaType.APPLICATION_JSON)
       .content("{\"accountId\":\"Id-123\",\"balance\":1000}")).andExpect(status().isCreated());
 
