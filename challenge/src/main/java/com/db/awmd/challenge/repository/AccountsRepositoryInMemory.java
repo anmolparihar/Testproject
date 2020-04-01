@@ -25,7 +25,7 @@ public class AccountsRepositoryInMemory implements AccountsRepository {
 	  return notificationService;
   }
 
-  public void setNotificationService(NotificationService notificationService) {
+  public void setNotificationService(NotificationService notificationService)  {
 	  this.notificationService = notificationService;
   }
   
