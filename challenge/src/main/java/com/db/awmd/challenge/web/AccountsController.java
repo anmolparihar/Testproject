@@ -62,7 +62,7 @@ public class AccountsController {
   public ResponseEntity<Object> amountTransfer(@RequestParam("accountFromId") String accountFromId, @RequestParam("accountToId") String accountToId, @RequestParam("amount") BigDecimal amount) {
 	  log.info("transfer amount from one account to another");
 	  try {
-		  this.accountsService.transferAmount(accountFromId, accountToId, amount);
+		  this.accountsService.amountTransfer(accountFromId, accountToId, amount);
 	  } catch(InsufficientBalanceException ie) {
 		  return new ResponseEntity<>(ie.getMessage(), HttpStatus.BAD_REQUEST);
 	  }
