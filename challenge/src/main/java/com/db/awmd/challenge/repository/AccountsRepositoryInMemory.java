@@ -49,27 +49,32 @@ public class AccountsRepositoryInMemory implements AccountsRepository {
 
 	synchronized public void amountTransfer(String accountFromId, String accountToId, BigDecimal amount) {
 		// TODO Auto-generated method stub
-		if (getAccount(accountFromId) != null) {
-			if (getAccount(accountToId) != null) {
+		if(getAccount(accountFromId)!= null) {
+			if(getAccount(accountToId)!= null) {
 				Account accountFrom = getAccount(accountFromId);
 				boolean flag = debitFromAccount(accountFrom, amount);
-				if (flag) {
+				if(flag) {
 					Account accountTo = getAccount(accountToId);
 					boolean creditFlag = creditToAccount(accountTo, amount);
-					if (creditFlag) {
-						// implement transaction notification functionality
-						transactionNotification(accountFrom, accountTo, amount);
+					if(creditFlag) {
+						//implement send notification functionality
+						transactionNotification(accountFrom,accountTo,amount);
 					} else {
-						throw new InsufficientBalanceException("Insufficient balance try next time !!!");
-					}
 
+					}
 				} else {
-					throw new AccountNotFoundException("Account " + accountToId + " not found!");
+					throw new InsufficientBalanceException(
+							"Insufficient balance !!!");
 				}
+
 			} else {
-				throw new AccountNotFoundException("Account " + accountFromId + " not found!");
+				throw new AccountNotFoundException(
+						"Account " + accountToId + " not found!");
 			}
-		}
+		} else {
+			  throw new AccountNotFoundException(
+				        "Account " + accountFromId + " not found!");
+		  }
 	}
 
 	public boolean debitFromAccount(Account account, BigDecimal amount) {
