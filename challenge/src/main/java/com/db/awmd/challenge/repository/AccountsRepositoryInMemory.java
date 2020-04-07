@@ -16,93 +16,87 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AccountsRepositoryInMemory implements AccountsRepository {
 
-  private final Map<String, Account> accounts = new ConcurrentHashMap<>();
-  
-  @Autowired
-  private NotificationService notificationService;
-  
-  public NotificationService getNotificationService() {
-	  return notificationService;
-  }
+	private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
-  public void setNotificationService(NotificationService notificationService)  {
-	  this.notificationService = notificationService;
-  }
-  
-  @Override
-  public void createAccount(Account account) throws DuplicateAccountIdException {
-    Account previousAccount = accounts.putIfAbsent(account.getAccountId(), account);
-    if (previousAccount != null) {
-      throw new DuplicateAccountIdException(
-        "Account id " + account.getAccountId() + " already exists!");
-    }
-  }
+	@Autowired
+	private NotificationService notificationService;
 
-  @Override
-  public Account getAccount(String accountId) {
-    return accounts.get(accountId);
-  }
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
 
-  @Override
-  public void clearAccounts() {
-    accounts.clear();
-  }
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
 
+	@Override
+	public void createAccount(Account account) throws DuplicateAccountIdException {
+		Account previousAccount = accounts.putIfAbsent(account.getAccountId(), account);
+		if (previousAccount != null) {
+			throw new DuplicateAccountIdException("Account id " + account.getAccountId() + " already exists!");
+		}
+	}
 
-  synchronized  public void transferAmount(String accountFromId, String accountToId, BigDecimal amount) {
-	  // TODO Auto-generated method stub
-	  if(getAccount(accountFromId)!= null) {
-		  if(getAccount(accountToId)!= null) {
-			  Account accountFrom = getAccount(accountFromId);
-			  boolean flag = debitFromAccount(accountFrom, amount);
-			  if(flag) {
-				  Account accountTo = getAccount(accountToId);
-				  boolean creditFlag = creditToAccount(accountTo, amount);
-				  if(creditFlag) {
-					  //implement send notification functionality
-					  sendNotification(accountFrom,accountTo,amount);
-				  } else {
+	@Override
+	public Account getAccount(String accountId) {
+		return accounts.get(accountId);
+	}
 
-				  }
-			  } else {
-				  throw new InsufficientBalanceException(
-					        "Insufficient balance !!!");
-			  }
+	@Override
+	public void clearAccounts() {
+		accounts.clear();
+	}
 
-		  } else {
-			  throw new AccountNotFoundException(
-				        "Account " + accountToId + " not found!");
-		  }
-	  } else {
-		  throw new AccountNotFoundException(
-			        "Account " + accountFromId + " not found!");
-	  }
-	  
-  }
-  
-  public boolean debitFromAccount(Account account, BigDecimal amount) {
-	  if(amount.doubleValue() < account.getBalance().doubleValue()) {
-		  account.setBalance(account.getBalance().subtract(amount));
-		  return true;
-	  } else {
-		  return false;
-	  }
-  }
+	synchronized public void amountTransfer(String accountFromId, String accountToId, BigDecimal amount) {
+		// TODO Auto-generated method stub
+		if (getAccount(accountFromId) != null) {
+			if (getAccount(accountToId) != null) {
+				Account accountFrom = getAccount(accountFromId);
+				boolean flag = debitFromAccount(accountFrom, amount);
+				if (flag) {
+					Account accountTo = getAccount(accountToId);
+					boolean creditFlag = creditToAccount(accountTo, amount);
+					if (creditFlag) {
+						// implement transaction notification functionality
+						transactionNotification(accountFrom, accountTo, amount);
+					} else {
+						throw new InsufficientBalanceException("Insufficient balance try next time !!!");
+					}
 
-  public boolean creditToAccount(Account account, BigDecimal amount) {
-	  account.setBalance(account.getBalance().add(amount));
-	  return true;
-  }
-  
-  public void sendNotification(Account accountFrom, Account accountTo, BigDecimal amount) {
-	  try {
-		  String accountFromNotification = amount +  " has been transfered to " + accountTo.getAccountId() + " & your Current Balance is : " + accountFrom.getBalance();
-		  String accountToNotification = amount +  " has been transfered from " + accountFrom.getAccountId() + " & your Current Balance is : " + accountTo.getBalance();
-		  notificationService.notifyAboutTransfer(accountFrom, accountFromNotification);
-		  notificationService.notifyAboutTransfer(accountTo, accountToNotification);
-	  } catch(RuntimeException e) {
-		  e.printStackTrace();
-	  }
-  }
+				} else {
+					throw new AccountNotFoundException("Account " + accountToId + " not found!");
+				}
+			} else {
+				throw new AccountNotFoundException("Account " + accountFromId + " not found!");
+			}
+		}
+	}
+
+	public boolean debitFromAccount(Account account, BigDecimal amount) {
+		if (amount.doubleValue() < account.getBalance().doubleValue()) {
+			account.setBalance(account.getBalance().subtract(amount));
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean creditToAccount(Account account, BigDecimal amount) {
+		account.setBalance(account.getBalance().add(amount));
+		return true;
+	}
+
+	public void transactionNotification(Account accountFrom, Account accountTo, BigDecimal amount) {
+		try {
+			String accountFromNotification = amount + " has been transfered to " + accountTo.getAccountId()
+					+ " & your Current Balance is : " + accountFrom.getBalance();
+			String accountToNotification = amount + " has been transfered from " + accountFrom.getAccountId()
+					+ " & your Current Balance is : " + accountTo.getBalance();
+			notificationService.notifyAboutTransfer(accountFrom, accountFromNotification);
+			notificationService.notifyAboutTransfer(accountTo, accountToNotification);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

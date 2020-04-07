@@ -47,16 +47,16 @@ public class AccountsServiceTest {
   }
   
   @Test
-  public void transferAmount() throws Exception {
-	  Account account = new Account("Id-1234");
+  public void amtTransfer() throws Exception {
+	  Account account = new Account("accno-123);
 	  account.setBalance(new BigDecimal(12000));
 	  this.accountsService.createAccount(account);
 
-	  Account account1 = new Account("Id-111");
+	  Account account1 = new Account("accno-231");
 	  account1.setBalance(new BigDecimal(1000));
 	  this.accountsService.createAccount(account1);
-	  String accountFromId = "Id-1234";
-	  String accountToId = "Id-111";
+	  String accountFromId = "accno-123";
+	  String accountToId = "accno-231";
 	  BigDecimal amount = new BigDecimal(1200);
 	  try {
 		  this.accountsService.transferAmount(accountFromId, accountToId, amount);
@@ -67,10 +67,10 @@ public class AccountsServiceTest {
   }
   
   @Test
-  public void transferAmount_InsufficientFund() throws Exception {
+  public void amtTransferInsufficientBalance() throws Exception {
 	  
-	  String accountFromId = "Id-123";
-	  String accountToId = "Id-111";
+	  String accountFromId = "accno-123";
+	  String accountToId = "accno-231";
 	  BigDecimal amount = new BigDecimal(1200000);
 	  
 	  try {

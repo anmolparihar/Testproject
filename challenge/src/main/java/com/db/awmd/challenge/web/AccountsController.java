@@ -30,6 +30,7 @@ public class AccountsController {
 
   private static final org.slf4j.Logger log =  org.slf4j.LoggerFactory.getLogger(AccountsController.class);
 	
+  @Autowired
   private final AccountsService accountsService;
 
   @Autowired
@@ -57,13 +58,13 @@ public class AccountsController {
   }
 
   
-  @PostMapping(path="/transfer", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> transferAmount(@RequestParam("accountFromId") String accountFromId, @RequestParam("accountToId") String accountToId, @RequestParam("amount") BigDecimal amount) {
+  @PostMapping(path="/transferAmt", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> amountTransfer(@RequestParam("accountFromId") String accountFromId, @RequestParam("accountToId") String accountToId, @RequestParam("amount") BigDecimal amount) {
 	  log.info("transfer amount from one account to another");
 	  try {
 		  this.accountsService.transferAmount(accountFromId, accountToId, amount);
-	  } catch(InsufficientBalanceException daie) {
-		  return new ResponseEntity<>(daie.getMessage(), HttpStatus.BAD_REQUEST);
+	  } catch(InsufficientBalanceException ie) {
+		  return new ResponseEntity<>(ie.getMessage(), HttpStatus.BAD_REQUEST);
 	  }
 	  return new ResponseEntity<>(HttpStatus.OK);
   }

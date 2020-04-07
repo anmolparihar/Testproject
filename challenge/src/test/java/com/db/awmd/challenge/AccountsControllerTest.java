@@ -105,34 +105,34 @@ public class AccountsControllerTest {
   }
   
   @Test
-  public void transferAmount() throws Exception {
-	  Account account = new Account("Id-1234", new BigDecimal("12000"));
+  public void amtTransfer() throws Exception {
+	  Account account = new Account("accno-123", new BigDecimal("10000"));
 	  this.accountsService.createAccount(account);
 
-	  Account account1 = new Account("Id-111", new BigDecimal("1000"));
+	  Account account1 = new Account("accno-231", new BigDecimal("2000"));
 	  this.accountsService.createAccount(account1);
 	  
-	  String accountFromId = "Id-1234";
-	  String accountToId = "Id-111";
+	  String accountFromId = "accno-123";
+	  String accountToId = "accno-231";
 	  BigDecimal amount = new BigDecimal("1200");
-	  this.mockMvc.perform(post("/v1/accounts/transfer").contentType(MediaType.APPLICATION_JSON).param("accountFromId", accountFromId)
+	  this.mockMvc.perform(post("/v1/accounts/transferAmt").contentType(MediaType.APPLICATION_JSON).param("accountFromId", accountFromId)
 			  .param("accountToId", accountToId).param("amount", amount.toString()))
 		      .andExpect(status().isOk());
 	
   }
   
   @Test
-  public void transferAmount_InsufficientFund() throws Exception {
-	  Account account = new Account("Id-1234", new BigDecimal("12000"));
+  public void amtTransferInsufficientBalance() throws Exception {
+	  Account account = new Account("accno-123", new BigDecimal("10000"));
 	  this.accountsService.createAccount(account);
 
-	  Account account1 = new Account("Id-111", new BigDecimal("1000"));
+	  Account account1 = new Account("accno-231", new BigDecimal("2000"));
 	  this.accountsService.createAccount(account1);
 	  
-	  String accountFromId = "Id-1234";
-	  String accountToId = "Id-111";
+	  String accountFromId = "accno-123";
+	  String accountToId ="accno-123";
 	  BigDecimal amount = new BigDecimal("120000");
-	  this.mockMvc.perform(post("/v1/accounts/transfer").contentType(MediaType.APPLICATION_JSON)
+	  this.mockMvc.perform(post("/v1/accounts/transferAmt").contentType(MediaType.APPLICATION_JSON)
 		      .param("accountFromId",accountFromId).param("accountToId", accountToId).param("amount", amount.toString())).andExpect(status().isBadRequest());
   }
 }
