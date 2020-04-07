@@ -48,7 +48,7 @@ public class AccountsServiceTest {
   
   @Test
   public void amtTransfer() throws Exception {
-	  Account account = new Account("accno-123);
+	  Account account = new Account("accno-123");
 	  account.setBalance(new BigDecimal(12000));
 	  this.accountsService.createAccount(account);
 
@@ -59,7 +59,7 @@ public class AccountsServiceTest {
 	  String accountToId = "accno-231";
 	  BigDecimal amount = new BigDecimal(1200);
 	  try {
-		  this.accountsService.transferAmount(accountFromId, accountToId, amount);
+		  this.accountsService.amountTransfer(accountFromId, accountToId, amount);
 	  } catch(RuntimeException e) {
 		  e.printStackTrace();
 	  }
