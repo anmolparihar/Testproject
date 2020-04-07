@@ -13,6 +13,6 @@ public interface AccountsRepository {
 
   void clearAccounts();
   
-  public void amtTransfer(String accountFromId, String accountToId, BigDecimal amount);
+  public void transferAmount(String accountFromId, String accountToId, BigDecimal amount);
   
 }
