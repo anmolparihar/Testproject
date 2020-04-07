@@ -42,7 +42,7 @@ public class AccountsService {
   }
   
   public void amountTransfer(String accountFromId, String accountToId, BigDecimal amount) {
-	  this.accountsRepository.transferAmount(accountFromId, accountToId, amount);
+	  this.accountsRepository.amountTransfer(accountFromId, accountToId, amount);
   }
   
 }
